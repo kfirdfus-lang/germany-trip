@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>🇩🇪 גרמניה 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Heebo:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+<style>
+:root{
+  --cream:#FAF7F2;
+  --warm:#F5EFE6;
+  --gold:#C9A84C;
+  --gold2:#E8C97A;
+  --forest:#2D4A3E;
+  --forest2:#3D6B5A;
+  --sky:#4A7FA5;
+  --sky2:#6BA3C7;
+  --text:#1A1A2E;
+  --text2:#4A4A6A;
+  --text3:#8A8AAA;
+  --border:#E8E0D5;
+  --shadow:0 2px 12px rgba(26,26,46,0.08);
+  --shadow-lg:0 8px 40px rgba(26,26,46,0.15);
+  --r:16px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--cream);font-family:'Heebo',sans-serif;color:var(--text);min-height:100vh}
+h1,h2,h3{font-family:'Playfair Display',serif}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:4px}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+
+.hero{
+  background:linear-gradient(135deg,var(--forest) 0%,var(--forest2) 40%,var(--sky) 100%);
+  padding:60px 24px 40px;
+  position:relative;
+  overflow:hidden;
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.card{background:#fff;border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;transition:transform 0.2s,box-shadow 0.2s}
+.card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600}
+.btn{padding:10px 20px;border-radius:10px;border:none;font-family:'Heebo',sans-serif;font-weight:600;cursor:pointer;transition:all 0.2s;font-size:14px}
+.btn-primary{background:var(--gold);color:var(--forest)}
+.btn-primary:hover{background:var(--gold2)}
+.btn-ghost{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.3)}
+.btn-ghost:hover{background:rgba(255,255,255,0.25)}
+input,select,textarea{font-family:'Heebo',sans-serif;direction:rtl}
+
+@media(max-width:768px){
+  .grid-2{grid-template-columns:1fr!important}
+  .grid-3{grid-template-columns:1fr!important}
+  .grid-4{grid-template-columns:repeat(2,1fr)!important}
+  .hide-mob{display:none!important}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const {useState,useEffect,useRef}=React;
+
+const CLOUD_NAME="doenkyk2s";
+const UPLOAD_PRESET="germany_trip";
+const CLOUD_URL=`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/upload`;
+
+// ── Data ──
+const INITIAL_DATA={
+  trip:{
+    title:"גרמניה 2026",
+    subtitle:"טיול משפחתי — אוגוסט 2026",
+    dates:"1–14 אוגוסט 2026",
+    people:"9 נוסעים • 2 משפחות + סבא וסבתא",
+  },
+  hotels:[
+    {id:1,name:"כפר הנופש אלגוי",location:"Allgäu, Bavaria",dates:"7 לילות",icon:"🏡",color:"#2D4A3E",desc:"שבוע בחיק הטבע הבווארי — הרים, אגמים ואוויר הרים"},
+    {id:2,name:"פארק אירופה",location:"Rust, Baden-Württemberg",dates:"5 לילות",icon:"🎢",color:"#4A7FA5",desc:"5 ימים מלאי הרפתקאות בפארק המשפחתי המדהים"},
+  ],
+  schedule:[
+    {day:1,date:"1 אוג׳",title:"טיסה ✈️",desc:"יציאה מתל אביב, נחיתה בגרמניה",location:"נמל תעופה",done:false},
+    {day:2,date:"2 אוג׳",title:"הגעה לאלגוי",desc:"קבלת מפתחות, קניות, הסתגלות",location:"Allgäu",done:false},
+    {day:3,date:"3 אוג׳",title:"טבע ואגמים",desc:"אגם Bodensee, טיול ברגל",location:"Bodensee",done:false},
+    {day:4,date:"4 אוג׳",title:"טירת נוישוואנשטיין",desc:"הטירה המפורסמת של בוואריה",location:"Neuschwanstein",done:false},
+    {day:5,date:"5 אוג׳",title:"יום חופשי",desc:"שחייה, בישול משותף, מנוחה",location:"כפר הנופש",done:false},
+    {day:6,date:"6 אוג׳",title:"מינכן",desc:"עיר בירת בוואריה — Marienplatz, English Garden",location:"Munich",done:false},
+    {day:7,date:"7 אוג׳",title:"יום אחרון באלגוי",desc:"טיול נוסף ואריזה",location:"Allgäu",done:false},
+    {day:8,date:"8 אוג׳",title:"נסיעה לפארק אירופה",desc:"העברת המטען, צ׳ק-אין",location:"Rust",done:false},
+    {day:9,date:"9 אוג׳",title:"פארק אירופה — יום 1",desc:"כניסה ראשונה! גלישות מים, אטרקציות",location:"Europa-Park",done:false},
+    {day:10,date:"10 אוג׳",title:"פארק אירופה — יום 2",desc:"חלק אירופי, מופעים",location:"Europa-Park",done:false},
+    {day:11,date:"11 אוג׳",title:"פארק אירופה — יום 3",desc:"פנאי, קניות, מתקנים נוספים",location:"Europa-Park",done:false},
+    {day:12,date:"12 אוג׳",title:"פארק אירופה — יום 4",desc:"יום אחרון בפארק",location:"Europa-Park",done:false},
+    {day:13,date:"13 אוג׳",title:"שחרור + סיור",desc:"עיר Freiburg הסמוכה",location:"Freiburg",done:false},
+    {day:14,date:"14 אוג׳",title:"טיסה חזרה ✈️",desc:"נסיעה לשדה תעופה, טיסה לישראל",location:"נמל תעופה",done:false},
+  ],
+  recommendations:[
+    {id:1,cat:"אוכל",title:"Hofbräuhaus",desc:"מסעדת הבירה המפורסמת של מינכן",location:"Munich",icon:"🍺",must:true},
+    {id:2,cat:"טבע",title:"Zugspitze",desc:"הר הגבוה ביותר בגרמניה — נוף מדהים",location:"Bavaria",icon:"⛰️",must:true},
+    {id:3,cat:"תרבות",title:"Neuschwanstein Castle",desc:"הטירה שהייתה ההשראה לטירת דיסני",location:"Allgäu",icon:"🏰",must:true},
+    {id:4,cat:"קניות",title:"Kaufhof & מרכזי מסחר",desc:"קניות בגרמניה — בגדים, צעצועים, מזכרות",location:"Munich",icon:"🛍️",must:false},
+    {id:5,cat:"אוכל",title:"Pretzel & Bratwurst",desc:"חובה לנסות רחוב האוכל הגרמני המסורתי",location:"везде",icon:"🥨",must:true},
+    {id:6,cat:"פנאי",title:"English Garden",desc:"הפארק הציבורי הגדול בעולם — גדול יותר מ-Central Park",location:"Munich",icon:"🌳",must:false},
+  ],
+  documents:[],
+  photos:[],
+  notes:"",
+};
+
+// Load from localStorage
+const loadData=()=>{
+  try{
+    const d=localStorage.getItem('germany_trip_2026');
+    if(d)return{...INITIAL_DATA,...JSON.parse(d)};
+  }catch{}
+  return INITIAL_DATA;
+};
+
+const saveData=(data)=>{
+  try{localStorage.setItem('germany_trip_2026',JSON.stringify(data));}catch{}
+};
+
+// ── Upload to Cloudinary ──
+const uploadFile=async(file,folder="docs")=>{
+  const fd=new FormData();
+  fd.append('file',file);
+  fd.append('upload_preset',UPLOAD_PRESET);
+  fd.append('folder',`germany_trip/${folder}`);
+  const r=await fetch(CLOUD_URL,{method:'POST',body:fd});
+  return await r.json();
+};
+
+// ── Components ──
+const Spinner=()=><div style={{width:24,height:24,border:'3px solid rgba(255,255,255,0.3)',borderTop:'3px solid #fff',borderRadius:'50%',animation:'spin 0.8s linear infinite'}}/>;
+
+const Tab=({active,onClick,children})=><button onClick={onClick} style={{padding:'10px 18px',borderRadius:10,border:'none',background:active?'var(--gold)':'transparent',color:active?'var(--forest)':'var(--text2)',fontWeight:active?700:500,fontSize:14,cursor:'pointer',fontFamily:'inherit',transition:'all 0.2s'}}>{children}</button>;
+
+// ── HERO ──
+const Hero=({trip})=><div className="hero">
+  <div style={{position:'relative',zIndex:1,textAlign:'center',color:'#fff'}}>
+    <div style={{fontSize:48,marginBottom:12}}>🇩🇪</div>
+    <h1 style={{fontSize:36,fontWeight:900,marginBottom:8,textShadow:'0 2px 10px rgba(0,0,0,0.3)'}}>{trip.title}</h1>
+    <p style={{fontSize:16,opacity:0.9,marginBottom:6}}>{trip.subtitle}</p>
+    <p style={{fontSize:14,opacity:0.75,marginBottom:20}}>{trip.dates} • {trip.people}</p>
+    <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
+      {['🏡 אלגוי','🎢 פארק אירופה','✈️ 14 ימים','👨‍👩‍👧‍👦 9 נוסעים'].map(t=><span key={t} style={{background:'rgba(255,255,255,0.15)',border:'1px solid rgba(255,255,255,0.3)',borderRadius:20,padding:'5px 14px',fontSize:12,fontWeight:600}}>{t}</span>)}
+    </div>
+  </div>
+</div>;
+
+// ── SCHEDULE ──
+const Schedule=({schedule,onToggle})=>{
+  const today=new Date();
+  return<div>
+    <h2 style={{fontSize:22,fontWeight:700,marginBottom:20,color:'var(--text)'}}>📅 לוח הטיסות</h2>
+    <div style={{display:'flex',flexDirection:'column',gap:10}}>
+      {schedule.map((day,i)=><div key={day.day} className="card" style={{padding:'16px 20px',display:'flex',gap:16,alignItems:'flex-start',borderRight:`4px solid ${day.done?'var(--gold)':'var(--border)'}`}}>
+        <div style={{flexShrink:0,textAlign:'center',minWidth:52}}>
+          <div style={{fontSize:11,fontWeight:700,color:'var(--text3)',textTransform:'uppercase'}}>יום</div>
+          <div style={{fontSize:24,fontWeight:900,color:'var(--gold)',lineHeight:1}}>{day.day}</div>
+          <div style={{fontSize:11,color:'var(--text3)'}}>{day.date}</div>
+        </div>
+        <div style={{flex:1}}>
+          <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}>
+            <h3 style={{fontSize:16,fontWeight:700,color:'var(--text)'}}>{day.title}</h3>
+            {day.done&&<span style={{background:'#E8F5E9',color:'#2E7D32',borderRadius:20,padding:'2px 8px',fontSize:11,fontWeight:600}}>✓ הושלם</span>}
+          </div>
+          <p style={{fontSize:13,color:'var(--text2)',marginBottom:4}}>{day.desc}</p>
+          <div style={{fontSize:12,color:'var(--text3)'}}>📍 {day.location}</div>
+        </div>
+        <button onClick={()=>onToggle(i)} style={{flexShrink:0,padding:'6px 12px',borderRadius:8,border:`1px solid ${day.done?'var(--gold)':'var(--border)'}`,background:day.done?'#FFFBEB':'#fff',color:day.done?'var(--gold)':'var(--text3)',fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:'inherit'}}>
+          {day.done?'✓ בוצע':'סמן'}
+        </button>
+      </div>)}
+    </div>
+  </div>;
+};
+
+// ── HOTELS ──
+const Hotels=({hotels})=><div>
+  <h2 style={{fontSize:22,fontWeight:700,marginBottom:20}}>🏨 לינה</h2>
+  <div className="grid-2" style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+    {hotels.map(h=><div key={h.id} className="card" style={{padding:24,background:`linear-gradient(135deg,${h.color}15,${h.color}05)`}}>
+      <div style={{fontSize:40,marginBottom:12}}>{h.icon}</div>
+      <h3 style={{fontSize:20,fontWeight:700,color:h.color,marginBottom:6}}>{h.name}</h3>
+      <p style={{fontSize:13,color:'var(--text3)',marginBottom:8}}>📍 {h.location}</p>
+      <div style={{display:'inline-block',background:h.color,color:'#fff',borderRadius:20,padding:'3px 12px',fontSize:12,fontWeight:600,marginBottom:12}}>{h.dates}</div>
+      <p style={{fontSize:14,color:'var(--text2)',lineHeight:1.6}}>{h.desc}</p>
+    </div>)}
+  </div>
+</div>;
+
+// ── RECOMMENDATIONS ──
+const Recommendations=({recs,onAdd,onDelete})=>{
+  const [showForm,setShowForm]=useState(false);
+  const [form,setForm]=useState({cat:"אוכל",title:"",desc:"",location:"",icon:"⭐",must:false});
+  const cats=["הכל",...[...new Set(recs.map(r=>r.cat))]];
+  const [filter,setFilter]=useState("הכל");
+  const filtered=filter==="הכל"?recs:recs.filter(r=>r.cat===filter);
+
+  return<div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+      <h2 style={{fontSize:22,fontWeight:700}}>⭐ המלצות</h2>
+      <button className="btn btn-primary" onClick={()=>setShowForm(!showForm)}>+ הוסף המלצה</button>
+    </div>
+
+    <div style={{display:'flex',gap:8,marginBottom:16,flexWrap:'wrap'}}>
+      {cats.map(c=><button key={c} onClick={()=>setFilter(c)} style={{padding:'5px 14px',borderRadius:20,border:'1px solid var(--border)',background:filter===c?'var(--gold)':'#fff',color:filter===c?'var(--forest)':'var(--text2)',fontWeight:600,fontSize:12,cursor:'pointer',fontFamily:'inherit'}}>{c}</button>)}
+    </div>
+
+    {showForm&&<div className="card" style={{padding:20,marginBottom:16,background:'var(--warm)'}}>
+      <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:12,marginBottom:12}}>
+        <div><label style={{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:4,display:'block'}}>קטגוריה</label>
+          <select value={form.cat} onChange={e=>setForm(p=>({...p,cat:e.target.value}))} style={{width:'100%',padding:'9px 12px',borderRadius:8,border:'1px solid var(--border)',fontSize:13,background:'#fff'}}>
+            {["אוכל","טבע","תרבות","קניות","פנאי","אחר"].map(c=><option key={c} value={c}>{c}</option>)}
+          </select></div>
+        <div><label style={{fontSize:12,fontWeight:600,color:'var(--text2)',marginBottom:4,display:'block'}}>אייקון</label>
+          <input value={form.icon} onChange={e=>setForm(p=>({...p,icon:e.target.value}))} style={{width:'100%',padding:'9px 12px',borderRadius:8,border:'1px solid var(--border)',fontSize:20,textAlign:'center'}} placeholder="🍕"/></div>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:10}}>
+        <input value={form.title} onChange={e=>setForm(p=>({...p,title:e.target.value}))} placeholder="שם המקום" style={{padding:'9px 12px',borderRadius:8,border:'1px solid var(--border)',fontSize:13}}/>
+        <input value={form.desc} onChange={e=>setForm(p=>({...p,desc:e.target.value}))} placeholder="תיאור קצר" style={{padding:'9px 12px',borderRadius:8,border:'1px solid var(--border)',fontSize:13}}/>
+        <input value={form.location} onChange={e=>setForm(p=>({...p,location:e.target.value}))} placeholder="מיקום" style={{padding:'9px 12px',borderRadius:8,border:'1px solid var(--border)',fontSize:13}}/>
+        <label style={{display:'flex',alignItems:'center',gap:8,fontSize:13,cursor:'pointer'}}>
+          <input type="checkbox" checked={form.must} onChange={e=>setForm(p=>({...p,must:e.target.checked}))}/>
+          חובה לביקור!
+        </label>
+      </div>
+      <div style={{display:'flex',gap:10,marginTop:14}}>
+        <button className="btn btn-primary" onClick={()=>{if(form.title){onAdd({...form,id:Date.now()});setForm({cat:"אוכל",title:"",desc:"",location:"",icon:"⭐",must:false});setShowForm(false);}}} style={{flex:1}}>הוסף</button>
+        <button onClick={()=>setShowForm(false)} style={{padding:'10px 16px',borderRadius:10,border:'1px solid var(--border)',background:'#fff',cursor:'pointer',fontFamily:'inherit'}}>ביטול</button>
+      </div>
+    </div>}
+
+    <div className="grid-3" style={{display:'grid',gridTemplateColumns:'repeat(3,1fr)',gap:14}}>
+      {filtered.map(r=><div key={r.id} className="card" style={{padding:18}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:10}}>
+          <span style={{fontSize:28}}>{r.icon}</span>
+          <div style={{display:'flex',gap:6,alignItems:'center'}}>
+            {r.must&&<span style={{background:'#FFF3CD',color:'#856404',fontSize:10,fontWeight:700,padding:'2px 7px',borderRadius:20}}>⭐ חובה</span>}
+            <button onClick={()=>onDelete(r.id)} style={{background:'none',border:'none',color:'var(--text3)',cursor:'pointer',fontSize:16,padding:2}}>×</button>
+          </div>
+        </div>
+        <div style={{display:'inline-block',background:'var(--warm)',color:'var(--text2)',borderRadius:20,padding:'2px 8px',fontSize:11,fontWeight:600,marginBottom:8}}>{r.cat}</div>
+        <h3 style={{fontSize:15,fontWeight:700,marginBottom:5}}>{r.title}</h3>
+        <p style={{fontSize:12,color:'var(--text2)',lineHeight:1.5,marginBottom:8}}>{r.desc}</p>
+        <div style={{fontSize:11,color:'var(--text3)'}}>📍 {r.location}</div>
+      </div>)}
+    </div>
+  </div>;
+};
+
+// ── DOCUMENTS ──
+const Documents=({docs,onUpload,onDelete})=>{
+  const [uploading,setUploading]=useState(false);
+  const fileRef=useRef();
+  const catColors={טיסה:'#E3F2FD',מלון:'#E8F5E9',ביטוח:'#FCE4EC',רכב:'#FFF3E0',אחר:'#F3E5F5'};
+
+  const handleUpload=async(e)=>{
+    const files=Array.from(e.target.files);
+    if(!files.length)return;
+    setUploading(true);
+    for(const file of files){
+      try{
+        const r=await uploadFile(file,'docs');
+        onUpload({id:Date.now()+Math.random(),name:file.name,url:r.secure_url,type:r.resource_type,cat:'אחר',size:file.size,public_id:r.public_id});
+      }catch(err){console.error(err);}
+    }
+    setUploading(false);
+    e.target.value='';
+  };
+
+  const cats=["טיסה","מלון","ביטוח","רכב","אחר"];
+
+  return<div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+      <h2 style={{fontSize:22,fontWeight:700}}>📄 מסמכים</h2>
+      <button className="btn btn-primary" onClick={()=>fileRef.current.click()} disabled={uploading}>
+        {uploading?<Spinner/>:'+ העלה מסמך'}
+      </button>
+      <input ref={fileRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style={{display:'none'}} onChange={handleUpload}/>
+    </div>
+
+    {docs.length===0&&<div style={{textAlign:'center',padding:'60px 20px',color:'var(--text3)',background:'var(--warm)',borderRadius:var(--r)}}>
+      <div style={{fontSize:48,marginBottom:12}}>📁</div>
+      <div style={{fontWeight:600,fontSize:16,marginBottom:8}}>אין מסמכים עדיין</div>
+      <div style={{fontSize:13}}>העלה כרטיסי טיסה, אישורי מלון, ביטוח ועוד</div>
+    </div>}
+
+    <div style={{display:'flex',flexDirection:'column',gap:10}}>
+      {docs.map(d=><div key={d.id} className="card" style={{padding:'14px 18px',display:'flex',alignItems:'center',gap:14}}>
+        <div style={{width:44,height:44,borderRadius:10,background:catColors[d.cat]||'#F5F5F5',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,flexShrink:0}}>
+          {d.cat==='טיסה'?'✈️':d.cat==='מלון'?'🏨':d.cat==='ביטוח'?'🛡️':d.cat==='רכב'?'🚗':'📄'}
+        </div>
+        <div style={{flex:1,minWidth:0}}>
+          <div style={{fontWeight:600,fontSize:14,marginBottom:3,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{d.name}</div>
+          <div style={{display:'flex',gap:10,alignItems:'center'}}>
+            <select value={d.cat} onChange={e=>{/* update cat */}} style={{fontSize:11,padding:'2px 8px',borderRadius:20,border:'1px solid var(--border)',background:catColors[d.cat]||'#F5F5F5',fontFamily:'inherit'}}>
+              {cats.map(c=><option key={c} value={c}>{c}</option>)}
+            </select>
+            <span style={{fontSize:11,color:'var(--text3)'}}>{d.size?`${(d.size/1024).toFixed(0)} KB`:''}</span>
+          </div>
+        </div>
+        <div style={{display:'flex',gap:8'}}>
+          <a href={d.url} target="_blank" rel="noopener noreferrer" style={{padding:'6px 12px',borderRadius:8,background:'var(--forest)',color:'#fff',fontSize:12,fontWeight:600,textDecoration:'none'}}>פתח</a>
+          <button onClick={()=>onDelete(d.id)} style={{padding:'6px 10px',borderRadius:8,border:'1px solid var(--border)',background:'#fff',color:'var(--text3)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}>✕</button>
+        </div>
+      </div>)}
+    </div>
+  </div>;
+};
+
+// ── PHOTOS ──
+const Photos=({photos,onUpload,onDelete})=>{
+  const [uploading,setUploading]=useState(false);
+  const [progress,setProgress]=useState(0);
+  const fileRef=useRef();
+
+  const handleUpload=async(e)=>{
+    const files=Array.from(e.target.files);
+    if(!files.length)return;
+    setUploading(true);
+    for(let i=0;i<files.length;i++){
+      setProgress(Math.round((i/files.length)*100));
+      try{
+        const r=await uploadFile(files[i],'photos');
+        onUpload({id:Date.now()+Math.random(),url:r.secure_url,name:files[i].name,type:r.resource_type,public_id:r.public_id,width:r.width,height:r.height});
+      }catch(err){console.error(err);}
+    }
+    setUploading(false);setProgress(0);
+    e.target.value='';
+  };
+
+  return<div>
+    <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:20}}>
+      <h2 style={{fontSize:22,fontWeight:700}}>📸 תמונות וסרטונים</h2>
+      <button className="btn btn-primary" onClick={()=>fileRef.current.click()} disabled={uploading}>
+        {uploading?`מעלה... ${progress}%`:'+ הוסף תמונות'}
+      </button>
+      <input ref={fileRef} type="file" multiple accept="image/*,video/*" style={{display:'none'}} onChange={handleUpload}/>
+    </div>
+
+    {photos.length===0&&<div style={{textAlign:'center',padding:'60px 20px',color:'var(--text3)',background:'var(--warm)',borderRadius:'16px'}}>
+      <div style={{fontSize:48,marginBottom:12}}>📷</div>
+      <div style={{fontWeight:600,fontSize:16,marginBottom:8}}>אין תמונות עדיין</div>
+      <div style={{fontSize:13}}>העלה תמונות וסרטונים מהטיול</div>
+    </div>}
+
+    <div className="grid-4" style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10}}>
+      {photos.map(p=><div key={p.id} style={{position:'relative',borderRadius:12,overflow:'hidden',aspectRatio:'1',background:'var(--warm)'}}>
+        {p.type==='video'
+          ?<video src={p.url} style={{width:'100%',height:'100%',objectFit:'cover'}} controls/>
+          :<img src={p.url} alt={p.name} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}}/>}
+        <button onClick={()=>onDelete(p.id)} style={{position:'absolute',top:6,left:6,width:24,height:24,borderRadius:'50%',background:'rgba(0,0,0,0.6)',border:'none',color:'#fff',fontSize:14,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center'}}>×</button>
+      </div>)}
+    </div>
+  </div>;
+};
+
+// ── NOTES ──
+const Notes=({notes,onChange})=><div>
+  <h2 style={{fontSize:22,fontWeight:700,marginBottom:20}}>📝 הערות ורשימות</h2>
+  <div className="card" style={{padding:20}}>
+    <textarea value={notes} onChange={e=>onChange(e.target.value)} placeholder="הוסף הערות, רשימת קניות, דברים לזכור, טיפים..." style={{width:'100%',minHeight:300,border:'none',outline:'none',fontSize:14,lineHeight:1.8,color:'var(--text)',resize:'vertical',fontFamily:'inherit',direction:'rtl',background:'transparent'}}/>
+  </div>
+</div>;
+
+// ── MAIN APP ──
+function App(){
+  const [data,setData]=useState(loadData());
+  const [tab,setTab]=useState("schedule");
+
+  useEffect(()=>saveData(data),[data]);
+
+  const update=(key,val)=>setData(p=>({...p,[key]:val}));
+
+  const tabs=[
+    {id:"schedule",label:"לוח זמנים",icon:"📅"},
+    {id:"hotels",label:"לינה",icon:"🏨"},
+    {id:"recommendations",label:"המלצות",icon:"⭐"},
+    {id:"documents",label:"מסמכים",icon:"📄"},
+    {id:"photos",label:"תמונות",icon:"📸"},
+    {id:"notes",label:"הערות",icon:"📝"},
+  ];
+
+  const toggleDay=(i)=>{
+    const s=[...data.schedule];
+    s[i]={...s[i],done:!s[i].done};
+    update('schedule',s);
+  };
+
+  return<div style={{minHeight:'100vh',background:'var(--cream)'}}>
+    <Hero trip={data.trip}/>
+
+    {/* Tab nav */}
+    <div style={{background:'#fff',borderBottom:'1px solid var(--border)',position:'sticky',top:0,zIndex:100,boxShadow:'0 2px 8px rgba(0,0,0,0.06)'}}>
+      <div style={{maxWidth:900,margin:'0 auto',padding:'8px 16px',display:'flex',gap:4,overflowX:'auto'}}>
+        {tabs.map(t=><Tab key={t.id} active={tab===t.id} onClick={()=>setTab(t.id)}>
+          {t.icon} {t.label}
+        </Tab>)}
+      </div>
+    </div>
+
+    {/* Content */}
+    <div style={{maxWidth:900,margin:'0 auto',padding:'32px 16px 60px'}}>
+      {tab==="schedule"&&<Schedule schedule={data.schedule} onToggle={toggleDay}/>}
+      {tab==="hotels"&&<Hotels hotels={data.hotels}/>}
+      {tab==="recommendations"&&<Recommendations recs={data.recommendations} onAdd={r=>update('recommendations',[...data.recommendations,r])} onDelete={id=>update('recommendations',data.recommendations.filter(r=>r.id!==id))}/>}
+      {tab==="documents"&&<Documents docs={data.documents} onUpload={d=>update('documents',[...data.documents,d])} onDelete={id=>update('documents',data.documents.filter(d=>d.id!==id))}/>}
+      {tab==="photos"&&<Photos photos={data.photos} onUpload={p=>update('photos',[...data.photos,p])} onDelete={id=>update('photos',data.photos.filter(p=>p.id!==id))}/>}
+      {tab==="notes"&&<Notes notes={data.notes} onChange={v=>update('notes',v)}/>}
+    </div>
+  </div>;
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
