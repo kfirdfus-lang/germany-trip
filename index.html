@@ -287,8 +287,7 @@ const Documents=({docs,onUpload,onDelete})=>{
       <input ref={fileRef} type="file" multiple accept=".pdf,.jpg,.jpeg,.png,.doc,.docx" style={{display:'none'}} onChange={handleUpload}/>
     </div>
 
-    {docs.length===0&&<div style={{textAlign:'center',padding:'60px 20px',color:'var(--text3)',background:'var(--warm)',borderRadius:var(--r)}}>
-      <div style={{fontSize:48,marginBottom:12}}>📁</div>
+    {docs.length===0&&<div style={{textAlign:'center',padding:'60px 20px',color:'var(--text3)',background:'var(--warm)',borderRadius:'16px'}}>      <div style={{fontSize:48,marginBottom:12}}>📁</div>
       <div style={{fontWeight:600,fontSize:16,marginBottom:8}}>אין מסמכים עדיין</div>
       <div style={{fontSize:13}}>העלה כרטיסי טיסה, אישורי מלון, ביטוח ועוד</div>
     </div>}
