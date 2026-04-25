@@ -306,7 +306,7 @@ const Documents=({docs,onUpload,onDelete})=>{
             <span style={{fontSize:11,color:'var(--text3)'}}>{d.size?`${(d.size/1024).toFixed(0)} KB`:''}</span>
           </div>
         </div>
-        <div style={{display:'flex',gap:8'}}>
+        <div style={{display:'flex',gap:8}}>
           <a href={d.url} target="_blank" rel="noopener noreferrer" style={{padding:'6px 12px',borderRadius:8,background:'var(--forest)',color:'#fff',fontSize:12,fontWeight:600,textDecoration:'none'}}>פתח</a>
           <button onClick={()=>onDelete(d.id)} style={{padding:'6px 10px',borderRadius:8,border:'1px solid var(--border)',background:'#fff',color:'var(--text3)',fontSize:12,cursor:'pointer',fontFamily:'inherit'}}>✕</button>
         </div>
